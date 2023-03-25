@@ -80,10 +80,71 @@ def input_sudoku():
 #     [0, 0, 9, 8, 0, 0, 0, 3, 6],
 #     [0, 0, 0, 3, 0, 6, 0, 9, 0]
 # ]
-puzzle = input_sudoku()
-# Solve the puzzle
-solution = solve_sudoku(puzzle)
+# puzzle = input_sudoku()
+# # Solve the puzzle
+# solution = solve_sudoku(puzzle)
 
-# Print the solution
-for row in solution:
-    print(row)
+# # Print the solution
+# for row in solution:
+#     print(row)
+import tkinter as tk
+
+class SudokuSolverApp:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Sudoku Solver")
+
+        # Create the Sudoku input grid
+        self.grid_entries = []
+        for row in range(9):
+            row_entries = []
+            for col in range(9):
+                entry = tk.Entry(self.root, width=3, font=("Arial", 16))
+                entry.grid(row=row, column=col)
+                row_entries.append(entry)
+            self.grid_entries.append(row_entries)
+
+        # Create the "Solve" button
+        solve_button = tk.Button(self.root, text="Solve", command=self.solve)
+        solve_button.grid(row=9, column=4)
+
+        # Create the solution grid
+        self.solution_entries = []
+        for row in range(9):
+            row_entries = []
+            for col in range(9):
+                entry = tk.Entry(self.root, width=3, font=("Arial", 16), state="readonly")
+                entry.grid(row=row+10, column=col)
+                row_entries.append(entry)
+            self.solution_entries.append(row_entries)
+
+    def solve(self):
+        # Get the input grid values
+        grid_values = []
+        for row_entries in self.grid_entries:
+            row_values = []
+            for entry in row_entries:
+                value = entry.get()
+                if value == "":
+                    row_values.append(0)
+                else:
+                    row_values.append(int(value))
+            grid_values.append(row_values)
+
+        # Solve the Sudoku puzzle
+        solution = solve_sudoku(grid_values)
+
+        # Display the solution grid
+        for row, row_entries in enumerate(self.solution_entries):
+            for col, entry in enumerate(row_entries):
+                entry.configure(state="normal")
+                entry.delete(0, tk.END)
+                entry.insert(0, str(solution[row][col]))
+                entry.configure(state="readonly")
+
+    def run(self):
+        self.root.mainloop()
+
+# Create and run the Sudoku Solver app
+app = SudokuSolverApp()
+app.run()
